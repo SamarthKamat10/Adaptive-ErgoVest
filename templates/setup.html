@@ -1,0 +1,22 @@
+{% extends "_authbase.html" %}{% block title %}First-time setup{% endblock %}
+{% block body %}
+<h1>Set up your administrator</h1>
+<p class="sub">This one-time step creates the account that controls the vest connection, calibration and training.</p>
+{% if not local %}
+<div class="formmsg bad">For safety, the administrator can only be created on the laptop running the app. Open <b>http://localhost:8000</b> on that laptop.</div>
+{% else %}
+<form id="f" data-api="/api/auth/setup" novalidate>
+  <div id="msg" class="formmsg bad hide" role="alert"></div>
+  <div class="field"><label for="full_name">Full name</label><input class="input" id="full_name" name="full_name" autocomplete="name" maxlength="80" required><div class="err" data-err="full_name"></div></div>
+  <div class="field"><label for="email">Email</label><input class="input" id="email" name="email" type="email" autocomplete="email" autocapitalize="none" required><div class="err" data-err="email"></div></div>
+  <div class="field"><label for="username">Username</label><input class="input" id="username" name="username" autocomplete="username" autocapitalize="none" maxlength="32" required><div class="err" data-err="username"></div></div>
+  <div class="field"><label for="password">Password</label>
+    <div class="pw"><input class="input" id="password" name="password" type="password" autocomplete="new-password" required>
+    <button type="button" data-toggle="password" aria-label="Show password"><svg class="ic"><use href="#i-eye"/></svg></button></div>
+    <div class="pwmeter" id="meter"><i></i><i></i><i></i><i></i></div><div class="hint" id="pwhint">At least 10 characters with a letter and a number.</div><div class="err" data-err="password"></div></div>
+  <div class="field"><label for="confirm">Confirm password</label><input class="input" id="confirm" name="confirm" type="password" autocomplete="new-password" required><div class="err" data-err="confirm"></div></div>
+  <button class="btn primary" type="submit">Create administrator</button>
+</form>
+{% endif %}
+{% include '_icons_auth.html' %}
+{% endblock %}

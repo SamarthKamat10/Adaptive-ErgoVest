@@ -1,0 +1,46 @@
+# Local secrets and configuration
+.env
+.env.*
+!.env.example
+instance/
+
+# Personal sensor data, calibration and session recordings
+data/
+*.csv
+*.xlsx
+*.xls
+
+# Trained models and generated artifacts
+models/
+*.pkl
+*.joblib
+*.model
+
+# Logs and local databases
+logs/
+*.log
+*.db
+*.sqlite
+*.sqlite3
+
+# Python environments and caches
+.venv/
+venv/
+env/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+
+# IDE and operating-system files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Private reports and presentations
+*.pdf
+*.doc
+*.docx
+*.ppt
+*.pptx

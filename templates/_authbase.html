@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="csrf" content="{{ csrf }}"><meta name="color-scheme" content="dark light">
+<title>{% block title %}Sign in{% endblock %} | Adaptive ErgoVest</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='12' fill='%233cc8ff'/%3E%3C/svg%3E">
+<script src="{{ url_for('static', filename='js/theme-init.js') }}"></script>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
+</head><body>
+<main class="auth">
+  <aside class="auth-art">
+    <div class="brand">{% with lid='art' %}{% include '_logo.html' %}{% endwith %}<span>Adaptive</span><b>ErgoVest</b></div>
+    <div><h2>Posture you can feel, risk you can see.</h2><p>Live sensing, haptic cues and a clear risk score from one wearable vest.</p></div>
+    {% include '_vest.html' %}
+  </aside>
+  <section class="auth-form"><div class="auth-card">
+    <div class="mobile-hero"><div class="brand">{% with lid='mob' %}{% include '_logo.html' %}{% endwith %}<span>Adaptive</span><b>ErgoVest</b></div></div>
+    {% block body %}{% endblock %}
+  </div></section>
+</main>
+<script src="{{ url_for('static', filename='js/auth.js') }}"></script>
+</body></html>

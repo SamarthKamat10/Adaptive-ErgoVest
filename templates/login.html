@@ -1,0 +1,15 @@
+{% extends "_authbase.html" %}{% block title %}Sign in{% endblock %}
+{% block body %}
+<h1>Welcome back</h1><p class="sub">Sign in to open your ErgoVest dashboard.</p>
+<form id="f" data-api="/api/auth/login" novalidate>
+  <div id="msg" class="formmsg bad hide" role="alert"></div>
+  <div class="field"><label for="identifier">Username or email</label><input class="input" id="identifier" name="identifier" autocomplete="username" autocapitalize="none" required><div class="err" data-err="identifier"></div></div>
+  <div class="field"><label for="password">Password</label>
+    <div class="pw"><input class="input" id="password" name="password" type="password" autocomplete="current-password" required>
+    <button type="button" data-toggle="password" aria-label="Show password"><svg class="ic"><use href="#i-eye"/></svg></button></div><div class="err" data-err="password"></div></div>
+  <div class="auth-row"><label class="check"><input type="checkbox" name="remember"> Keep me signed in</label><a href="/forgot">Forgot password?</a></div>
+  <button class="btn primary" type="submit">Sign in</button>
+</form>
+{% if allow_reg %}<p class="auth-foot">New here? <a href="/register">Create an account</a></p>{% endif %}
+{% include '_icons_auth.html' %}
+{% endblock %}

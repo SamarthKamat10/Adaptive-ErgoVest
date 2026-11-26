@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="csrf" content="{{ csrf }}"><meta name="role" content="{{ me.role }}"><meta name="color-scheme" content="dark light">
+<title>Adaptive ErgoVest</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='12' fill='%233cc8ff'/%3E%3C/svg%3E">
+<script src="{{ url_for('static', filename='js/theme-init.js') }}"></script>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
+</head><body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<symbol id="i-home" viewBox="0 0 24 24"><path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></symbol>
+<symbol id="i-live" viewBox="0 0 24 24"><path d="M3 12h4l3-8 4 16 3-8h4"/></symbol>
+<symbol id="i-body" viewBox="0 0 24 24"><circle cx="12" cy="4.5" r="2.5"/><path d="M7 21v-7l-2-4 4-2h6l4 2-2 4v7M12 8v13"/></symbol>
+<symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/></symbol>
+<symbol id="i-chart" viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-8M22 20H2"/></symbol>
+<symbol id="i-history" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7L3 8M3 3v5h5M12 7v5l3 2"/></symbol>
+<symbol id="i-device" viewBox="0 0 24 24"><rect x="7" y="7" width="10" height="10" rx="2"/><path d="M9 2v3M15 2v3M9 19v3M15 19v3M2 9h3M2 15h3M19 9h3M19 15h3"/></symbol>
+<symbol id="i-settings" viewBox="0 0 24 24"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0M14 4v4M8 10v4M16 16v4"/></symbol>
+<symbol id="i-vol" viewBox="0 0 24 24"><path d="M11 5L6 9H3v6h3l5 4zM15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13"/></symbol>
+<symbol id="i-voloff" viewBox="0 0 24 24"><path d="M11 5L6 9H3v6h3l5 4zM22 9l-6 6M16 9l6 6"/></symbol>
+<symbol id="i-more" viewBox="0 0 24 24"><path d="M5 12h.01M12 12h.01M19 12h.01" stroke-width="3.2"/></symbol>
+<symbol id="i-logout" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></symbol>
+<symbol id="i-chev" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></symbol>
+<symbol id="i-warn" viewBox="0 0 24 24"><path d="M12 3l10 18H2zM12 10v5M12 18h.01"/></symbol>
+<symbol id="i-dl" viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5M4 21h16"/></symbol>
+</defs></svg>
+
+<div class="shell">
+  <aside class="side">
+    <div class="brand">{% with lid='side' %}{% include '_logo.html' %}{% endwith %}<span>Adaptive</span><b>ErgoVest</b></div>
+    <nav class="nav" aria-label="Main">
+      <a data-nav="dash"><svg class="ic"><use href="#i-home"/></svg>Dashboard</a>
+      <a data-nav="live"><svg class="ic"><use href="#i-live"/></svg>Live sensors</a>
+      <a data-nav="posture"><svg class="ic"><use href="#i-body"/></svg>Posture</a>
+      <a data-nav="risk"><svg class="ic"><use href="#i-shield"/></svg>Risk analysis</a>
+      <a data-nav="analytics"><svg class="ic"><use href="#i-chart"/></svg>Analytics</a>
+      <a data-nav="history"><svg class="ic"><use href="#i-history"/></svg>History</a>
+      <a data-nav="device"><svg class="ic"><use href="#i-device"/></svg>Device</a>
+      <a data-nav="settings"><svg class="ic"><use href="#i-settings"/></svg>Settings</a>
+    </nav>
+    <div class="me"><div class="avatar" id="avatar">{{ me.full_name[:1]|upper }}</div><div class="who"><b id="meName">{{ me.full_name }}</b><small>{{ 'Administrator' if me.role=='admin' else 'Member' }}</small></div></div>
+  </aside>
+
+  <div class="content">
+    <header class="top">
+      <div class="brand">{% with lid='top' %}{% include '_logo.html' %}{% endwith %}<b>ErgoVest</b></div>
+      <h1 id="pageTitle">Dashboard</h1>
+      <span class="chip" id="modeChip"><span class="dot"></span><span id="modeTxt">DEMO</span></span>
+      <span class="chip" id="connChip"><span class="dot"></span><span id="connTxt">Connecting</span></span>
+      <button class="iconbtn" id="soundBtn" aria-pressed="false" aria-label="Sound alerts off. Turn on"><svg class="ic"><use href="#i-voloff"/></svg></button>
+    </header>
+    <div class="banner task" id="taskBanner" role="status"></div>
+    <div class="banner stale" id="staleBanner" role="status"></div>
+
+    <!-- ============ DASHBOARD ============ -->
+    <section class="view" id="v-dash" aria-labelledby="pageTitle">
+      <div class="alertbar" id="alertBar" role="alert"><svg class="ic"><use href="#i-warn"/></svg><span>High risk. Reduce forward bending and twisting.</span></div>
+      <div class="grid">
+        <div class="card hero s8 lvl-none" id="heroCard">
+          <div class="hero-in">
+            <div class="gauge" aria-label="Risk score"><svg viewBox="0 0 120 120"><circle class="trk" cx="60" cy="60" r="52" fill="none" stroke-width="9" stroke-linecap="round" stroke-dasharray="245 327"/><circle class="val" id="gaugeVal" cx="60" cy="60" r="52" fill="none" stroke-width="9" stroke-linecap="round" stroke-dasharray="245 327" stroke-dashoffset="245"/></svg>
+              <div class="mid"><b class="num" id="riskNum">--</b><span>risk out of 100</span></div></div>
+            <div>
+              <div class="state-word" id="stateWord">Waiting</div>
+              <div class="state-msg" id="stateMsg">Waiting for data.</div>
+              <div class="scale" aria-hidden="true"><div class="a"></div><div class="b"></div><div class="c"></div><div class="d"></div></div>
+              <div class="scale-l"><span>Low</span><span>Moderate</span><span>Elevated</span><span>High</span></div>
+              <div class="minichips"><span class="badge" id="srcBadge">DEMO</span><span class="badge" id="moveBadge">Movement: --</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="card s4">
+          <h2>Monitoring session <small id="sessBadge" class="badge">Not recording</small></h2>
+          <div class="stat"><span class="l">Duration</span><span class="v num" id="sessDur">00:00:00</span></div>
+          <div class="kv"><span>Risk windows</span><b class="num" id="sessWin">0</b></div>
+          <div class="kv"><span>Average / peak risk</span><b class="num" id="sessRisk">-- / --</b></div>
+          <div class="kv"><span>Haptic cues</span><b class="num" id="sessCues">0</b></div>
+          <div class="row" style="margin-top:14px"><button class="btn primary" id="sessBtn" style="flex:1">Start session</button></div>
+          <p class="hint" style="margin-top:10px" id="sessHint">Sessions are saved to History under your account.</p>
+        </div>
+
+        <div class="card s3"><div class="stat"><span class="l">Sensor link</span><span class="v" id="dConn">--</span></div><div class="hint" id="dConnSub">&nbsp;</div></div>
+        <div class="card s3"><div class="stat"><span class="l">Calibration</span><span class="v" id="dCal">--</span></div><div class="hint" id="dCalSub">&nbsp;</div></div>
+        <div class="card s3"><div class="stat"><span class="l">Movement model</span><span class="v" id="dModel">--</span></div><div class="hint" id="dModelSub">&nbsp;</div></div>
+        <div class="card s3"><div class="stat"><span class="l">Last reading</span><span class="v num" id="dLast">--</span></div><div class="hint" id="dLastSub">&nbsp;</div></div>
+
+        <div class="card chartcard s7"><h2>Risk score <small>last <span id="dRiskRange">60</span> s</small></h2><canvas id="ch-dash-risk" aria-label="Risk score over time"></canvas></div>
+        <div class="card s5" id="dMeas"><h2>Posture measurements</h2>
+          <div class="tiles" id="dTiles"></div></div>
+      </div>
+    </section>
+
+    <!-- ============ LIVE ============ -->
+    <section class="view" id="v-live">
+      <div class="pagehead"><p id="liveNote">Readings straight from the vest. Values shown with the units the firmware sends.</p></div>
+      <div class="grid" id="liveGroups">
+        <details class="grp s6" open data-grp="motion"><summary>Motion (MPU6050)<svg class="ic chev"><use href="#i-chev"/></svg></summary><div class="tiles" id="g-motion"></div></details>
+        <details class="grp s6" open data-grp="angles"><summary>Tilt angles<svg class="ic chev"><use href="#i-chev"/></svg></summary><div class="tiles" id="g-angles"></div></details>
+        <details class="grp s6" open data-grp="flex"><summary>Flex sensors<svg class="ic chev"><use href="#i-chev"/></svg></summary><div class="tiles" id="g-flex"></div></details>
+        <details class="grp s6" open data-grp="fsr"><summary>Pressure (FSR)<svg class="ic chev"><use href="#i-chev"/></svg></summary><div class="tiles" id="g-fsr"></div></details>
+        <details class="grp s12" open data-grp="env"><summary>Environment<svg class="ic chev"><use href="#i-chev"/></svg></summary><div class="tiles" id="g-env"></div></details>
+      </div>
+    </section>
+
+    <!-- ============ POSTURE ============ -->
+    <section class="view" id="v-posture">
+      <div class="grid">
+        <div class="card hero s8 lvl-none" id="postureCard">
+          <h2>Upper-body posture <small id="postureNote">from the vest's tilt sensor</small></h2>
+          <div class="figs">
+            <div class="fig"><svg viewBox="0 0 240 300" id="figSide" role="img" aria-label="Side view of forward tilt">
+              <line class="ref" x1="120" y1="212" x2="120" y2="40"/>
+              <path class="limb" d="M120 212L108 290M120 212L134 290"/>
+              <g class="torso" id="torsoSide"><path class="body" d="M98 212V128q0-20 22-20t22 20v84z"/><rect x="113" y="92" width="14" height="18" rx="5" class="body"/><circle class="body" cx="120" cy="76" r="19"/>
+                <path d="M104 134v68" stroke="var(--accent)" stroke-width="3" stroke-linecap="round" opacity=".7"/><circle class="node" cx="102" cy="126" r="5"/></g>
+              <path class="arc" id="arcSide" d="M120 150A62 62 0 0 1 120 150"/>
+              <text x="12" y="20">Facing right, schematic</text></svg>
+              <div class="cap"><b class="num" id="pFwd">--</b><div>Forward tilt (degrees)</div></div></div>
+            <div class="fig"><svg viewBox="0 0 240 300" id="figRear" role="img" aria-label="Rear view of side tilt">
+              <line class="ref" x1="120" y1="212" x2="120" y2="40"/>
+              <path class="limb" d="M108 212L100 290M132 212L140 290"/>
+              <g class="torso" id="torsoRear"><path class="body" d="M70 130q0-22 30-24h40q30 2 30 24l-8 82H78z"/><rect x="113" y="92" width="14" height="18" rx="5" class="body"/><circle class="body" cx="120" cy="76" r="19"/>
+                <path d="M120 112v98" stroke="var(--accent)" stroke-width="2" stroke-dasharray="3 5" opacity=".7"/><circle class="node" cx="120" cy="126" r="5"/></g>
+              <path class="arc" id="arcRear" d="M120 150A62 62 0 0 1 120 150"/>
+              <text x="12" y="20">Rear view, schematic</text></svg>
+              <div class="cap"><b class="num" id="pSide">--</b><div>Side tilt (degrees)</div></div></div>
+          </div>
+          <p class="hint" style="margin-top:12px">Tilt comes from the accelerometer relative to gravity. The firmware reports the size of the tilt, not its direction, so the rear figure always leans the same way. This is not camera tracking.</p>
+        </div>
+        <div class="card s4"><h2>Angles</h2>
+          <div class="kv"><span>Forward tilt</span><b class="num" id="pFwd2">--</b></div>
+          <div class="kv"><span>Side tilt</span><b class="num" id="pSide2">--</b></div>
+          <div class="kv"><span>Total tilt</span><b class="num" id="pTot2">--</b></div>
+          <div class="kv"><span>Trunk flexion (risk engine)</span><b class="num" id="pFlex">--</b></div>
+          <div class="kv"><span>Risk category</span><b id="pLvl">--</b></div>
+          <p class="hint" style="margin-top:10px">Trunk flexion is the median forward tilt of the last 0.5 s, the value the risk score uses.</p></div>
+      </div>
+    </section>
+
+    <!-- ============ RISK ============ -->
+    <section class="view" id="v-risk">
+      <div class="grid">
+        <div class="card hero s12 lvl-none" id="riskCard">
+          <h2>Current risk <small id="riskNote"></small></h2>
+          <div class="row" style="justify-content:space-between;align-items:flex-end"><div><div class="state-word" id="rWord">--</div><div class="state-msg" id="rMsg"></div></div><div class="stat" style="align-items:flex-end"><span class="v num" id="rNum" style="font-size:44px">--</span><span class="l">out of 100</span></div></div>
+          <div class="scale"><div class="a"></div><div class="b"></div><div class="c"></div><div class="d"></div></div>
+          <div class="scale-l"><span>Low 0-30</span><span>Moderate 30-55</span><span>Elevated 55-75</span><span>High 75-100</span></div>
+        </div>
+        <div class="card s7"><h2>What is driving the score <small id="topFactor"></small></h2>
+          <div class="stack" id="stack" aria-hidden="true"></div><div class="legend" id="stackLegend" style="margin:8px 0 18px"></div>
+          <div class="contrib" id="contrib"></div>
+          <p class="hint" style="margin-top:14px">70 points come from forward bending (10 degrees counts as none, 60 or more as full). The other 30 are shared among rotation, speed, repetition, load, deviation from your calibration and left-right pressure difference.</p></div>
+        <div class="card s5">
+          <h2>Closed-loop check</h2>
+          <div class="stat"><span class="l">Corrected movements that improved</span><span class="v num" id="verPct">--</span></div>
+          <div class="kv"><span>Improved / checked</span><b class="num" id="verTxt">0 of 0</b></div>
+          <div class="kv"><span>Haptic cues fired</span><b class="num" id="cues">0</b></div>
+          <div class="kv"><span>Last cue</span><b id="lastCue">--</b></div>
+          <div class="kv"><span>Last check</span><b id="lastRes">--</b></div>
+          <p class="hint" style="margin-top:10px">A cue fires automatically at risk 50 or more. Motors only run when the vest is connected.</p>
+        </div>
+        <div class="card s12"><h2>Event log</h2><div class="events" id="events"></div></div>
+      </div>
+    </section>
+
+    <!-- ============ ANALYTICS ============ -->
+    <section class="view" id="v-analytics">
+      <div class="row" style="justify-content:space-between;margin-bottom:16px"><div class="seg" id="rawRange" role="group" aria-label="Sensor time window"><button data-s="5" aria-pressed="false">5 s</button><button data-s="10" aria-pressed="true">10 s</button><button data-s="15" aria-pressed="false">15 s</button></div>
+        <div class="seg" id="riskRange" role="group" aria-label="Risk time window"><button data-s="60" aria-pressed="true">1 min</button><button data-s="300" aria-pressed="false">5 min</button></div></div>
+      <div class="grid">
+        <div class="card chartcard s6"><h2>Accelerometer <small>m/s²</small></h2><div class="legend" id="lg-acc"></div><canvas id="ch-acc"></canvas></div>
+        <div class="card chartcard s6"><h2>Gyroscope <small>rad/s</small></h2><div class="legend" id="lg-gyro"></div><canvas id="ch-gyro"></canvas></div>
+        <div class="card chartcard s6"><h2>Flex sensors <small>raw ADC</small></h2><div class="legend" id="lg-flex"></div><canvas id="ch-flex"></canvas></div>
+        <div class="card chartcard s6"><h2>Pressure (FSR) <small>raw ADC</small></h2><div class="legend" id="lg-fsr"></div><canvas id="ch-fsr"></canvas></div>
+        <div class="card chartcard s6"><h2>Tilt <small>degrees</small></h2><div class="legend" id="lg-tilt"></div><canvas id="ch-tilt"></canvas></div>
+        <div class="card chartcard s6"><h2>Risk score <small>0 to 100</small></h2><div class="legend" id="lg-risk"></div><canvas id="ch-risk"></canvas></div>
+      </div>
+    </section>
+
+    <!-- ============ HISTORY ============ -->
+    <section class="view" id="v-history">
+      <div class="card"><h2>Your sessions <small>saved under your account</small></h2><div id="sessList"></div></div>
+    </section>
+
+    <!-- ============ DEVICE ============ -->
+    <section class="view" id="v-device">
+      <div class="grid">
+        <div class="card s6"><h2>Connection <span class="badge" id="devMode">DEMO</span></h2>
+          <div class="row" style="margin-bottom:14px"><div class="seg" id="modeSeg" role="group" aria-label="Mode"><button data-m="demo" aria-pressed="true">Demo</button><button data-m="live" aria-pressed="false">Live</button></div></div>
+          <p class="hint" id="modeHint" style="margin-bottom:14px">Demo shows simulated readings. It never mixes with real data.</p>
+          <div class="field"><label for="portSel">Serial port (ESP32 over USB)</label><select class="input" id="portSel"></select></div>
+          <div class="row"><button class="btn sm" id="portRefresh">Refresh ports</button><button class="btn primary" id="btnConnect">Connect</button><button class="btn" id="btnDisconnect">Disconnect</button></div>
+          <div class="hint admin-note hide" style="margin-top:12px">Only the administrator can change the connection.</div>
+          <div style="margin-top:16px"><div class="kv"><span>Port</span><b id="devPort">--</b></div><div class="kv"><span>Data rate</span><b class="num" id="devRate">--</b></div><div class="kv"><span>Rejected lines</span><b class="num" id="devBad">0</b></div><div class="kv"><span>Last firmware message</span><b id="devFw">--</b></div></div>
+        </div>
+        <div class="card s6"><h2>Haptic motor test</h2>
+          <p class="hint" style="margin-bottom:12px">Manual test only. It is separate from automatic posture cues. A success message means the command was written to the vest.</p>
+          <div class="motorgrid"><button class="btn" data-cue="L">Left</button><button class="btn" data-cue="R">Right</button><button class="btn" data-cue="B">Both</button><button class="btn" data-cue="F">Fast</button><button class="btn danger" data-cue="S">Stop</button></div>
+        </div>
+        <div class="card s6 admin-only"><h2>1. Calibrate <small id="calState"></small></h2>
+          <p class="hint" style="margin-bottom:12px">Takes about 80 seconds in LIVE mode: stand upright, bend, twist, lift a light box. Wear the vest.</p>
+          <div class="row"><input class="input" id="worker" value="W01" maxlength="20" style="max-width:120px" aria-label="Worker ID"><button class="btn primary" id="btnCal">Start calibration</button><button class="btn" id="btnCancel">Cancel task</button></div></div>
+        <div class="card s6 admin-only"><h2>2. Record movements <small id="recCount"></small></h2>
+          <p class="hint" style="margin-bottom:12px">Record each movement type a few times, in LIVE mode. These files train your model.</p>
+          <div class="row"><select class="input" id="label" style="max-width:190px" aria-label="Movement type">{% for l in labels %}<option>{{ l }}</option>{% endfor %}</select><input class="input" id="secs" type="number" value="30" min="5" max="120" style="max-width:90px" aria-label="Seconds"><button class="btn" id="btnRec">Record</button></div></div>
+        <div class="card s12 admin-only"><h2>3. Train model <small id="modelState"></small></h2>
+          <div class="row"><button class="btn primary" id="btnTrain">Train from my recordings</button><button class="btn" id="btnReset">Reset session counters</button><a class="btn sm" href="/api/export/verification"><svg class="ic"><use href="#i-dl"/></svg>Verification CSV</a><a class="btn sm" href="/api/export/session"><svg class="ic"><use href="#i-dl"/></svg>Session log CSV</a></div>
+          <details id="repBox" class="hide" style="margin-top:14px"><summary>Last training report</summary><pre class="rep" id="repTxt"></pre></details>
+          <p class="hint" style="margin-top:12px">Meaningful predictions need your own calibration plus recordings of at least two movement types. DEMO data is never used for training.</p></div>
+      </div>
+    </section>
+
+    <!-- ============ SETTINGS ============ -->
+    <section class="view" id="v-settings">
+      <div class="grid">
+        <div class="card s6"><h2>Profile <small>@{{ me.username }}</small></h2>
+          <form id="profForm" novalidate>
+            <div class="field"><label for="pf-name">Full name</label><input class="input" id="pf-name" name="full_name" value="{{ me.full_name }}" maxlength="80"><div class="err" data-err="full_name"></div></div>
+            <div class="field"><label for="pf-email">Email</label><input class="input" id="pf-email" name="email" type="email" value="{{ me.email }}"><div class="err" data-err="email"></div></div>
+            <button class="btn primary" type="submit">Save profile</button></form></div>
+        <div class="card s6"><h2>Change password</h2>
+          <form id="pwForm" novalidate>
+            <div class="field"><label for="pw-cur">Current password</label><input class="input" id="pw-cur" name="current" type="password" autocomplete="current-password"><div class="err" data-err="current"></div></div>
+            <div class="field"><label for="pw-new">New password</label><input class="input" id="pw-new" name="password" type="password" autocomplete="new-password"><div class="err" data-err="password"></div></div>
+            <div class="field"><label for="pw-cf">Confirm new password</label><input class="input" id="pw-cf" name="confirm" type="password" autocomplete="new-password"></div>
+            <button class="btn" type="submit">Change password</button></form></div>
+        <div class="card s6"><h2>Sound alerts</h2>
+          <div class="row" style="justify-content:space-between;flex-wrap:nowrap"><div><b>Play a warning sound at HIGH RISK</b><div class="hint">Off by default. Plays through this device's speakers only when risk is HIGH RISK. No test beep when you turn it on.</div></div><button class="switch" id="soundSw" role="switch" aria-checked="false" aria-label="Sound alerts"></button></div>
+          <div class="field" style="margin-top:16px"><label for="vol">Volume</label><input id="vol" type="range" min="10" max="100" value="60" style="accent-color:var(--accent)"></div>
+          <p class="hint">There is no physical buzzer on the vest. On phones the browser only allows sound after you tap this switch, and some phones mute it when silent mode is on or the screen is locked. Each device has its own switch.</p></div>
+        <div class="card s6"><h2>Appearance</h2>
+          <div class="seg" id="themeSeg" role="group" aria-label="Theme"><button data-t="dark" aria-pressed="true">Dark</button><button data-t="light" aria-pressed="false">Light</button><button data-t="system" aria-pressed="false">System</button></div>
+          <p class="hint" style="margin-top:10px">Saved on this device only.</p></div>
+        <div class="card s6"><h2>Open on your phone <small id="clientsTxt"></small></h2>
+          <div class="row" style="align-items:flex-start;flex-wrap:nowrap"><div class="qr" id="qr"></div><div style="min-width:0"><div id="lanUrls" class="mute">Looking for the network address...</div>
+          <p class="hint" style="margin-top:10px">Phone and laptop must be on the same Wi-Fi. Sign in on the phone with your account; it shows the same live readings.</p></div></div></div>
+        <div class="card s6"><h2>About</h2>
+          <div class="kv"><span>Hardware</span><b>ESP32-WROOM-32</b></div><div class="kv"><span>Sensors</span><b>1 MPU6050, 3 flex, 3 FSR, DHT11, DS18B20</b></div>
+          <div class="kv"><span>Feedback</span><b>2 vibration motors, browser audio</b></div><div class="kv"><span>Serial</span><b>115200 baud, 19 columns</b></div>
+          <div class="kv"><span>Signed in as</span><b>{{ me.username }} ({{ me.role }})</b></div>
+          <div class="row" style="margin-top:14px"><button class="btn danger" id="logoutBtn"><svg class="ic"><use href="#i-logout"/></svg>Sign out</button></div></div>
+      </div>
+    </section>
+  </div>
+</div>
+
+<nav class="bottomnav" aria-label="Main">
+  <a data-nav="dash"><svg class="ic"><use href="#i-home"/></svg>Home</a>
+  <a data-nav="live"><svg class="ic"><use href="#i-live"/></svg>Live</a>
+  <a data-nav="posture"><svg class="ic"><use href="#i-body"/></svg>Posture</a>
+  <a data-nav="risk"><svg class="ic"><use href="#i-shield"/></svg>Risk</a>
+  <button id="moreBtn" aria-haspopup="dialog"><svg class="ic"><use href="#i-more"/></svg>More</button>
+</nav>
+<div class="sheet" id="sheet"><div class="panel" role="dialog" aria-label="More pages"><div class="grab"></div><nav class="nav">
+  <a data-nav="analytics"><svg class="ic"><use href="#i-chart"/></svg>Analytics</a><a data-nav="history"><svg class="ic"><use href="#i-history"/></svg>History</a>
+  <a data-nav="device"><svg class="ic"><use href="#i-device"/></svg>Device</a><a data-nav="settings"><svg class="ic"><use href="#i-settings"/></svg>Settings</a></nav></div></div>
+<dialog id="sessDlg"><div class="in" id="sessDlgBody"></div></dialog>
+<div id="toasts" aria-live="polite"></div>
+<script src="{{ url_for('static', filename='js/charts.js') }}"></script>
+<script src="{{ url_for('static', filename='js/audio.js') }}"></script>
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body></html>

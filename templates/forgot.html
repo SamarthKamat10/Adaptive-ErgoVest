@@ -1,0 +1,11 @@
+{% extends "_authbase.html" %}{% block title %}Reset password{% endblock %}
+{% block body %}
+<h1>Reset your password</h1>
+<p class="sub">This app runs on your own laptop and has no email service, so resets are done on the laptop.</p>
+<div class="card" style="box-shadow:none">
+  <p style="margin-bottom:10px"><b>On the laptop that runs ErgoVest</b>, open a terminal in the project folder and run:</p>
+  <pre class="rep">python reset_password.py YOUR_USERNAME</pre>
+  <p class="hint" style="margin-top:10px">It asks for a new password and signs that account out everywhere. Signed in already? Use Settings, then Change password.</p>
+</div>
+<p class="auth-foot"><a href="/login">Back to sign in</a></p>
+{% endblock %}
